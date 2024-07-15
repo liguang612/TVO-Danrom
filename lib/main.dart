@@ -1,27 +1,27 @@
-import 'package:danrom/api/firebase_api.dart';
+// import 'package:danrom/api/firebase_api.dart';
 import 'package:danrom/app_localization.dart';
 import 'package:danrom/config/config.dart';
 import 'package:danrom/config/routes.dart';
 import 'package:danrom/data/constants.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
-import 'package:danrom/firebase_options.dart';
+// import 'package:danrom/firebase_options.dart';
 import 'package:danrom/language_cubit.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseApi().initNotification();
-  await MobileAds.instance.initialize();
+  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // await FirebaseApi().initNotification();
+  // await MobileAds.instance.initialize();
   await configureInjection();
 
-  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ["BE14F4D9DA41BFFFBEB21E23B3DFED6B"]);
-  MobileAds.instance.updateRequestConfiguration(requestConfiguration);
+  // RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ["BE14F4D9DA41BFFFBEB21E23B3DFED6B"]);
+  // MobileAds.instance.updateRequestConfiguration(requestConfiguration);
 
   runApp(const MyApp());
 }
