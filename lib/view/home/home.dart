@@ -11,7 +11,6 @@ import 'package:danrom/view/number/number.dart';
 import 'package:danrom/view/wheel/wheel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late BannerAd bannerAd;
+  // late BannerAd bannerAd;
   int currentPageIndex = 0;
   bool isAdLoaded = false;
   final pages = [const Wheel(), const Chooser(), const Decision(), const Number(), const Coin()];
@@ -30,26 +29,26 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    initBannerAd();
+    // initBannerAd();
   }
 
-  void initBannerAd() {
-    bannerAd = BannerAd(
-        size: AdSize.banner,
-        adUnitId: 'ca-app-pub-2030598370780716/4646093803',
-        listener: BannerAdListener(
-            onAdLoaded: (ad) => setState(() {
-                  isAdLoaded = true;
-                  print("loaded");
-                }),
-            onAdFailedToLoad: (ad, error) {
-              ad.dispose();
-              print(error);
-            }),
-        request: const AdRequest());
+  // void initBannerAd() {
+  //   bannerAd = BannerAd(
+  //       size: AdSize.banner,
+  //       adUnitId: 'ca-app-pub-2030598370780716/4646093803',
+  //       listener: BannerAdListener(
+  //           onAdLoaded: (ad) => setState(() {
+  //                 isAdLoaded = true;
+  //                 print("loaded");
+  //               }),
+  //           onAdFailedToLoad: (ad, error) {
+  //             ad.dispose();
+  //             print(error);
+  //           }),
+  //       request: const AdRequest());
 
-    bannerAd.load();
-  }
+  //   bannerAd.load();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +63,10 @@ class _HomePageState extends State<HomePage> {
         body: pages[currentPageIndex],
         bottomNavigationBar: isAdLoaded
             ? SizedBox(
-                height: bannerAd.size.height.toDouble(),
-                width: bannerAd.size.width.toDouble(),
-                child: AdWidget(ad: bannerAd),
-              )
+                // height: bannerAd.size.height.toDouble(),
+                // width: bannerAd.size.width.toDouble(),
+                // child: AdWidget(ad: bannerAd),
+                )
             : BottomNavigationBar(
                 backgroundColor: AppColor.white,
                 currentIndex: currentPageIndex,
