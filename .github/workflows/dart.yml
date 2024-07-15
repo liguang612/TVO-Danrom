@@ -33,10 +33,15 @@ jobs:
         working-directory: build/ios/iphoneos
 
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+        uses: ncipollo/release-action@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/ios/iphoneos/FlutterIpaExport.ipa
+          artifacts: "build/ios/iphoneos/FlutterIpaExport.ipa"
           tag: v1.0
-          overwrite: true
-          body: "This is first release"
+          token: ${{ secret.IPA_TOKEN }}
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: build/ios/iphoneos/FlutterIpaExport.ipa
+      #     tag: v1.0
+      #     overwrite: true
+      #     body: "This is first release"
