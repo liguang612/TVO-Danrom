@@ -37,7 +37,7 @@ jobs:
         with:
           artifacts: "build/ios/iphoneos/FlutterIpaExport.ipa"
           tag: v1.0
-          token: ${{ secret.IPA_TOKEN }}
+          token: ${{ secrets.IPA_TOKEN }}
       #   uses: svenstaro/upload-release-action@v2
       #   with:
       #     repo_token: ${{ secrets.GITHUB_TOKEN }}
