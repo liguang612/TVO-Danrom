@@ -56,6 +56,7 @@ class _WheelState extends State<Wheel> {
   Widget build(BuildContext context) {
     log(isChosen.toString());
     return Scaffold(
+        backgroundColor: AppColor.white,
         body: BlocProvider.value(
             value: cubit,
             child: Padding(

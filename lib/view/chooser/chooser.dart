@@ -44,83 +44,85 @@ class _ChooserState extends State<Chooser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: AppColor.white,
         body: Column(children: [
-      Expanded(
-          child: Stack(children: [
-        if (!started)
-          Center(
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SvgPicture.asset(Assets.icTouch),
-            const SizedBox(height: 16),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text(AppLocalizations.of(context)?.translate('Hold your finger to ') ?? '',
-                  style: AppTextTheme.descriptionSmall),
-              Text(AppLocalizations.of(context)?.translate('Start!') ?? '', style: AppTextTheme.descriptionBoldSmall)
-            ])
+          Expanded(
+              child: Stack(children: [
+            if (!started)
+              Center(
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                SvgPicture.asset(Assets.icTouch),
+                const SizedBox(height: 16),
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(AppLocalizations.of(context)?.translate('Hold your finger to ') ?? '',
+                      style: AppTextTheme.descriptionSmall),
+                  Text(AppLocalizations.of(context)?.translate('Start!') ?? '',
+                      style: AppTextTheme.descriptionBoldSmall)
+                ])
+              ])),
+            body
           ])),
-        body
-      ])),
-      Padding(
-          padding: const EdgeInsets.all(16),
-          child: Stack(children: [
-            Row(children: [
-              PrimaryIconButton(
-                  child: SvgPicture.asset(Assets.icSliderHorizontal),
-                  onPressed: () {
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (context) => ChooserOptions(onChanged: () {
-                              setState(() {
-                                bodyKey.currentState?.reset();
-                                countDown = 3;
+          Padding(
+              padding: const EdgeInsets.all(16),
+              child: Stack(children: [
+                Row(children: [
+                  PrimaryIconButton(
+                      child: SvgPicture.asset(Assets.icSliderHorizontal),
+                      onPressed: () {
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) => ChooserOptions(onChanged: () {
+                                  setState(() {
+                                    bodyKey.currentState?.reset();
+                                    countDown = 3;
+                                    timer.cancel();
+                                    started = false;
+                                  });
+                                }));
+                      })
+                ]),
+                if (started)
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            gradient: timer.isActive || localDataAccess.getTapMode()
+                                ? const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    colors: [AppColor.primaryColor1, AppColor.primaryColor2],
+                                    end: Alignment.bottomRight)
+                                : null),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              if (countDown > 0) {
                                 timer.cancel();
-                                started = false;
-                              });
-                            }));
-                  })
-            ]),
-            if (started)
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: timer.isActive || localDataAccess.getTapMode()
-                            ? const LinearGradient(
-                                begin: Alignment.topLeft,
-                                colors: [AppColor.primaryColor1, AppColor.primaryColor2],
-                                end: Alignment.bottomRight)
-                            : null),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (countDown > 0) {
-                            timer.cancel();
-                            setState(() {
-                              countDown = 0;
-                              bodyKey.currentState?.startProc();
-                            });
-                          } else {
-                            if (localDataAccess.getTapMode()) {
-                              setState(() {
-                                countDown = 3;
-                                bodyKey.currentState?.reset();
-                              });
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColor.transparent,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                            shadowColor: AppColor.transparent),
-                        child: Text(
-                            countDown > 0
-                                ? '${AppLocalizations.of(context)?.translate('Start')} ${timer.isActive ? '($countDown)' : ''}'
-                                : localDataAccess.getTapMode()
-                                    ? AppLocalizations.of(context)?.translate('Reset') ?? ''
-                                    : AppLocalizations.of(context)?.translate('Start') ?? '',
-                            style: AppTextTheme.descriptionSemiBoldSmall.copyWith(color: AppColor.white))))
-              ])
-          ]))
-    ]));
+                                setState(() {
+                                  countDown = 0;
+                                  bodyKey.currentState?.startProc();
+                                });
+                              } else {
+                                if (localDataAccess.getTapMode()) {
+                                  setState(() {
+                                    countDown = 3;
+                                    bodyKey.currentState?.reset();
+                                  });
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColor.transparent,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                                shadowColor: AppColor.transparent),
+                            child: Text(
+                                countDown > 0
+                                    ? '${AppLocalizations.of(context)?.translate('Start')} ${timer.isActive ? '($countDown)' : ''}'
+                                    : localDataAccess.getTapMode()
+                                        ? AppLocalizations.of(context)?.translate('Reset') ?? ''
+                                        : AppLocalizations.of(context)?.translate('Start') ?? '',
+                                style: AppTextTheme.descriptionSemiBoldSmall.copyWith(color: AppColor.white))))
+                  ])
+              ]))
+        ]));
   }
 
   @override
