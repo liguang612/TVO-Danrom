@@ -6,6 +6,8 @@ on:
 jobs:
   build-ios:
     name: 🎉 iOS Build
+    permissions:
+      contents: write
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
