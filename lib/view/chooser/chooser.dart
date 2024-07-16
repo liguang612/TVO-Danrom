@@ -203,8 +203,9 @@ class _MultiChooserState extends State<MultiChooser> {
                   () => ImmediateMultiDragGestureRecognizer(), (ImmediateMultiDragGestureRecognizer instance) {
             instance.onStart = (Offset offset) {
               setState(() {
-                fingers.add(offset);
                 countDown = 6;
+                fingers.add(offset);
+                results.clear();
               });
               if (fingers.length > localDataAccess.getWinners()) {
                 widget.endCountdown();
@@ -212,6 +213,7 @@ class _MultiChooserState extends State<MultiChooser> {
               } else {
                 widget.getStart();
               }
+              procTimer.cancel();
               return ItemDrag(
                   offset, (p0, p1) => onDrag(p0, p1), (p0) => localDataAccess.getTapMode() ? null : onEndDrag(p0));
             };
