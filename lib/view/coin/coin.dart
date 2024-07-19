@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
@@ -26,6 +27,8 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _rotationAnimation;
   late Animation<double> _positionAnimation;
+
+  final AppAd appAd = getIt.get();
 
   final player = AudioPlayer();
   late String coinSkin;
@@ -142,7 +145,8 @@ class _CoinState extends State<Coin> with SingleTickerProviderStateMixin {
                                 colors: [AppColor.primaryColor1, AppColor.primaryColor2],
                                 end: Alignment.bottomRight)),
                         child: TextButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              appAd.loadInterstitialAd();
                               setState(() {
                                 _isFlying = true;
                                 _rotationAnimation =

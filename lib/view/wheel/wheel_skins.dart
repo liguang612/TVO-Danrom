@@ -1,5 +1,7 @@
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/data/constants.dart';
 import 'package:danrom/data/local/local_data_access.dart';
+import 'package:danrom/di/di.dart';
 import 'package:danrom/resources/colors.dart';
 import 'package:danrom/resources/resources.dart';
 import 'package:danrom/resources/themes.dart';
@@ -11,10 +13,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class WheelSkins extends StatelessWidget {
+  final AppAd appAd = getIt.get();
   final WheelCubit cubit;
   final LocalDataAccess localDataAccess;
 
-  const WheelSkins({super.key, required this.cubit, required this.localDataAccess});
+  WheelSkins({super.key, required this.cubit, required this.localDataAccess});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +71,10 @@ class WheelSkins extends StatelessWidget {
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2, crossAxisSpacing: 14, mainAxisSpacing: 10, childAspectRatio: 168 / 219),
                         itemBuilder: (context, index) => WheelSkinItem(
-                            cubit: cubit, localDataAccess: localDataAccess, wheelSkin: wheelSkins.keys.toList()[index]),
+                            appAd: appAd,
+                            cubit: cubit,
+                            localDataAccess: localDataAccess,
+                            wheelSkin: wheelSkins.keys.toList()[index]),
                         itemCount: wheelSkins.length);
                   },
                 ))));
@@ -76,18 +82,28 @@ class WheelSkins extends StatelessWidget {
 }
 
 class WheelSkinItem extends StatelessWidget {
+  final AppAd appAd;
   final WheelCubit cubit;
   final LocalDataAccess localDataAccess;
   final String wheelSkin;
 
-  const WheelSkinItem({super.key, required this.cubit, required this.localDataAccess, required this.wheelSkin});
+  const WheelSkinItem(
+      {super.key, required this.appAd, required this.cubit, required this.localDataAccess, required this.wheelSkin});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          cubit.changeSkin(wheelSkin);
+          if (!localDataAccess.getWheelRepo().contains(wheelSkin)) {
+            if (appAd.rwSkin < 2) {
+              appAd.loadRewardSkinAd();
+              return;
+            }
+            appAd.rwSkin -= 2;
+          }
+          localDataAccess.addWheelSkin(wheelSkin);
           localDataAccess.setWheelSkin(wheelSkin);
+          cubit.changeSkin(wheelSkin);
         },
         child: Bouncing(
             child: Container(
@@ -100,15 +116,13 @@ class WheelSkinItem extends StatelessWidget {
                     return Positioned(
                         bottom: 4,
                         child: ShaderMask(
-                            shaderCallback: (Rect bounds) {
-                              return LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: wheelSkin == localDataAccess.getWheelSkin()
-                                          ? [AppColor.primaryColor1, AppColor.primaryColor2]
-                                          : [AppColor.gray03, AppColor.gray03])
-                                  .createShader(bounds);
-                            },
+                            shaderCallback: (Rect bounds) => LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: wheelSkin == localDataAccess.getWheelSkin()
+                                        ? [AppColor.primaryColor1, AppColor.primaryColor2]
+                                        : [AppColor.gray03, AppColor.gray03])
+                                .createShader(bounds),
                             child: const Icon(Icons.check_circle_rounded, color: Colors.white)));
                   })
                 ]))));

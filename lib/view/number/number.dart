@@ -1,3 +1,4 @@
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
@@ -24,6 +25,8 @@ class Number extends StatefulWidget {
 }
 
 class _NumberState extends State<Number> {
+  final AppAd appAd = getIt.get();
+
   final NumberCubit cubit = getIt.get();
   Key _key = UniqueKey();
   final LocalDataAccess localDataAccess = getIt.get();
@@ -111,10 +114,13 @@ class _NumberState extends State<Number> {
                         : Center(
                             child: Bouncing(
                                 child: GestureDetector(
-                                    onTap: () => setState(() {
-                                          isDisable = true;
-                                          started = true;
-                                        }),
+                                    onTap: () async {
+                                      appAd.loadInterstitialAd();
+                                      setState(() {
+                                        isDisable = true;
+                                        started = true;
+                                      });
+                                    },
                                     child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                                       SvgPicture.asset(Assets.icTouch),
                                       const SizedBox(height: 16),
@@ -171,7 +177,8 @@ class _NumberState extends State<Number> {
                                 colors: [AppColor.primaryColor1, AppColor.primaryColor2],
                                 end: Alignment.bottomRight)),
                         child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              appAd.loadInterstitialAd();
                               setState(() {
                                 _key = UniqueKey();
                                 results.clear();

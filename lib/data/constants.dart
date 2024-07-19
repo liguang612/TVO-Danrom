@@ -14,6 +14,10 @@ class LanguageDisplay {
 
 Map<String, String> languageDisplayStr = {'en': 'English', 'vi': 'Tiếng Việt'};
 
+Map<String, bool> cardSkins = {'light.svg': false, 'dark.svg': true}; // 0: normal, 1: pro
+
+final List<String> coinSkins = ['dollar', 'indian_rupee', 'test'];
+
 const Map<String, Map<String, dynamic>> wheelSkins = {
   'style1': {
     'colors': [Color(0xFF333333), Color(0xFFF2F2F2)]
@@ -68,4 +72,10 @@ class SharedPreferenceKey {
 
   /* SYSTEM */
   static const String language = 'language';
+  /* ------------ */
+
+  /* DATA */
+  static const String cardRepo = 'cardRepo';
+  static const String coinRepo = 'coinRepo';
+  static const String wheelRepo = 'wheelRepo';
 }

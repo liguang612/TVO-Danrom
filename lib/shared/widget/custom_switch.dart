@@ -33,7 +33,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 60));
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 60));
     _circleAnimation = AlignmentTween(
             begin: widget.value ? Alignment.centerRight : Alignment.centerLeft,
             end: widget.value ? Alignment.centerLeft : Alignment.centerRight)
@@ -52,7 +52,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
                 } else {
                   _animationController.forward();
                 }
-                widget.value == false ? widget.onChanged(true) : widget.onChanged(false);
+                widget.onChanged(!widget.value);
               },
               child: Container(
                   decoration: BoxDecoration(

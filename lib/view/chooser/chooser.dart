@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
@@ -188,6 +189,7 @@ class MultiChooser extends StatefulWidget {
 }
 
 class _MultiChooserState extends State<MultiChooser> {
+  final AppAd appAd = getIt.get();
   double countDown = 6;
   int successing = 6;
   List<Offset> fingers = [];
@@ -209,13 +211,16 @@ class _MultiChooserState extends State<MultiChooser> {
                 fingers.add(offset);
                 results.clear();
               });
+
               if (fingers.length > localDataAccess.getWinners()) {
                 widget.endCountdown();
                 widget.startCountdown();
               } else {
                 widget.getStart();
               }
-              procTimer.cancel();
+              try {
+                procTimer.cancel();
+              } catch (e) {}
               return ItemDrag(
                   offset, (p0, p1) => onDrag(p0, p1), (p0) => localDataAccess.getTapMode() ? null : onEndDrag(p0));
             };
@@ -260,14 +265,14 @@ class _MultiChooserState extends State<MultiChooser> {
   }
 
   void onDrag(Offset oldOffset, Offset newOffset) {
-    setState(() {
-      fingers[fingers.indexOf(oldOffset)] = newOffset;
-    });
+    setState(() => fingers[fingers.indexOf(oldOffset)] = newOffset);
   }
 
   void onEndDrag(Offset details) {
     widget.endCountdown();
-    procTimer.cancel();
+    try {
+      procTimer.cancel();
+    } catch (e) {}
 
     results.clear();
     setState(() {
@@ -360,13 +365,17 @@ class _MultiChooserState extends State<MultiChooser> {
         });
       }
     });
+
+    if (successing == 0) appAd.loadInterstitialAd();
   }
 
   void reset() {
     setState(() {
       countDown = 6;
       fingers.clear();
-      procTimer.cancel();
+      try {
+        procTimer.cancel();
+      } catch (e) {}
       results.clear();
     });
   }

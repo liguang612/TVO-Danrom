@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
@@ -28,6 +29,7 @@ class Decision extends StatefulWidget {
 }
 
 class _DecisionState extends State<Decision> {
+  final AppAd appAd = getIt.get();
   final CardState cardState = getIt.get();
   final DecisionCubit cubit = getIt.get();
   bool isInitialized = false;
@@ -213,6 +215,8 @@ class _DecisionState extends State<Decision> {
                                   end: Alignment.bottomRight)),
                           child: ElevatedButton(
                               onPressed: () async {
+                                appAd.loadInterstitialAd();
+
                                 showDialog(context: context, builder: (context) => const Loading());
                                 await Future.delayed(const Duration(seconds: 1));
                                 setState(() {

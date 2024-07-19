@@ -49,4 +49,15 @@ abstract class LocalDataAccess {
   String? getLanguage();
 
   void setLanguage(String language);
+  /* -------------- */
+
+  /* DATA */
+  void addCoinSkin(String skin);
+  List<String> getCoinRepo();
+
+  void addCardSkin(String skin);
+  List<String> getCardRepo();
+
+  void addWheelSkin(String skin);
+  List<String> getWheelRepo();
 }

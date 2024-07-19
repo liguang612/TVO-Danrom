@@ -6,7 +6,7 @@
         android:usesCleartextTraffic="true">
         <meta-data 
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-2030598370780716~1747849172"
+            android:value="ca-app-pub-4557719725987729~5786427840"
         />
         <activity
             android:name=".MainActivity"

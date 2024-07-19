@@ -6,6 +6,7 @@ import 'package:danrom/app_localization.dart';
 import 'package:danrom/data/constants.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/resources/colors.dart';
 import 'package:danrom/resources/resources.dart';
 import 'package:danrom/resources/themes.dart';
@@ -26,6 +27,7 @@ class Wheel extends StatefulWidget {
 }
 
 class _WheelState extends State<Wheel> {
+  final AppAd appAd = getIt.get();
   late List<dynamic> colors;
   final WheelCubit cubit = getIt.get();
   late int duration;
@@ -108,10 +110,7 @@ class _WheelState extends State<Wheel> {
                                             while (
                                                 isChosen.contains(tmp = math.Random().nextInt(wheelChoices.length))) {}
                                             selected.add(tmp);
-
                                             isFlying = true;
-
-                                            log(isChosen.toString());
                                           })
                                         : null,
                                     child: BlocConsumer<WheelCubit, WheelState>(
@@ -177,11 +176,14 @@ class _WheelState extends State<Wheel> {
                                                                           ? AppColor.white
                                                                           : AppColor.black)));
                                                         }),
-                                                        onAnimationEnd: () => setState(() {
-                                                              result = wheelChoices[tmp];
-                                                              if (!isLoop) isChosen.add(tmp);
-                                                              isFlying = false;
-                                                            }),
+                                                        onAnimationEnd: () async {
+                                                          appAd.loadInterstitialAd();
+                                                          setState(() {
+                                                            result = wheelChoices[tmp];
+                                                            if (!isLoop) isChosen.add(tmp);
+                                                            isFlying = false;
+                                                          });
+                                                        },
                                                         selected: selected.stream))),
                                             if (wheelSkins[wheelSkin]?['decoration'] == true)
                                               SvgPicture.asset('${Assets.icWheelDecoration}/$wheelSkin.svg',

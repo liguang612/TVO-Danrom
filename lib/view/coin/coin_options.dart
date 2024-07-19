@@ -1,4 +1,6 @@
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
+import 'package:danrom/data/constants.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
 import 'package:danrom/resources/colors.dart';
@@ -12,7 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CoinOptions extends StatelessWidget {
-  final List<String> coinSkins = ['dollar', 'indian_rupee', 'test'];
+  final AppAd appAd = getIt.get();
 
   CoinOptions({super.key});
 
@@ -61,10 +63,10 @@ class CoinOptions extends StatelessWidget {
                     children: coinSkins
                         .map((e) => Row(children: [
                               CoinSkinItem(
-                                coinSkin: e,
-                                cubit: getIt.get<CoinCubit>(),
-                                localDataAccess: getIt.get<LocalDataAccess>(),
-                              ),
+                                  appAd: appAd,
+                                  coinSkin: e,
+                                  cubit: getIt.get<CoinCubit>(),
+                                  localDataAccess: getIt.get<LocalDataAccess>()),
                               const SizedBox(width: 16)
                             ]))
                         .toList()))
@@ -74,17 +76,27 @@ class CoinOptions extends StatelessWidget {
 }
 
 class CoinSkinItem extends StatelessWidget {
+  final AppAd appAd;
   final String coinSkin;
   final CoinCubit cubit;
   final LocalDataAccess localDataAccess;
 
-  const CoinSkinItem({super.key, required this.coinSkin, required this.cubit, required this.localDataAccess});
+  const CoinSkinItem(
+      {super.key, required this.appAd, required this.coinSkin, required this.cubit, required this.localDataAccess});
 
   @override
   Widget build(BuildContext context) {
     return Bouncing(
         child: InkWell(
       onTap: () {
+        if (!localDataAccess.getCoinRepo().contains(coinSkin)) {
+          if (appAd.rwSkin < 2) {
+            appAd.loadRewardSkinAd();
+            return;
+          }
+          appAd.rwSkin -= 2;
+        }
+        localDataAccess.addCoinSkin(coinSkin);
         localDataAccess.setCoinSkin(coinSkin);
         cubit.chooseCoinSkin(coinSkin);
       },
@@ -106,15 +118,13 @@ class CoinSkinItem extends StatelessWidget {
                       bottom: 4,
                       right: 4,
                       child: ShaderMask(
-                          shaderCallback: (Rect bounds) {
-                            return LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: coinSkin == localDataAccess.getCoinSkin()
-                                        ? [AppColor.primaryColor1, AppColor.primaryColor2]
-                                        : [AppColor.gray03, AppColor.gray03])
-                                .createShader(bounds);
-                          },
+                          shaderCallback: (Rect bounds) => LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: coinSkin == localDataAccess.getCoinSkin()
+                                      ? [AppColor.primaryColor1, AppColor.primaryColor2]
+                                      : [AppColor.gray03, AppColor.gray03])
+                              .createShader(bounds),
                           child: const Icon(Icons.check_circle_rounded, color: Colors.white)));
                 })
           ])),

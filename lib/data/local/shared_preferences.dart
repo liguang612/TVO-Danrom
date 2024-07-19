@@ -171,4 +171,37 @@ class SharePrefHelper implements LocalDataAccess {
   void setLanguage(String language) {
     sharedPref.setString(SharedPreferenceKey.language, language);
   }
+  /* --------- */
+
+  /* DATA */
+
+  @override
+  void addCardSkin(String skin) {
+    sharedPref.setStringList(SharedPreferenceKey.cardRepo, getCardRepo()..add(skin));
+  }
+
+  @override
+  List<String> getCardRepo() {
+    return sharedPref.getStringList(SharedPreferenceKey.cardRepo) ?? [];
+  }
+
+  @override
+  void addCoinSkin(String skin) {
+    sharedPref.setStringList(SharedPreferenceKey.coinRepo, getCoinRepo()..add(skin));
+  }
+
+  @override
+  List<String> getCoinRepo() {
+    return sharedPref.getStringList(SharedPreferenceKey.coinRepo) ?? [];
+  }
+
+  @override
+  void addWheelSkin(String skin) {
+    sharedPref.setStringList(SharedPreferenceKey.wheelRepo, getWheelRepo()..add(skin));
+  }
+
+  @override
+  List<String> getWheelRepo() {
+    return sharedPref.getStringList(SharedPreferenceKey.wheelRepo) ?? [];
+  }
 }

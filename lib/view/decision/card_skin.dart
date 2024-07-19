@@ -1,4 +1,6 @@
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
+import 'package:danrom/data/constants.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
 import 'package:danrom/resources/colors.dart';
@@ -22,9 +24,9 @@ class CardSkin extends StatefulWidget {
 }
 
 class _CardSkinState extends State<CardSkin> {
+  final AppAd appAd = getIt.get();
   final DecisionCubit cubit = getIt.get();
   final LocalDataAccess localDataAccess = getIt.get();
-  Map<String, bool> cardSkins = {'light.svg': false, 'dark.svg': true}; // 0: normal, 1: pro
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,8 @@ class _CardSkinState extends State<CardSkin> {
                   child: Row(
                       children: cardSkins.entries
                           .map((e) => Row(children: [
-                                CardSkinItem(cardSkin: e.key, localDataAccess: localDataAccess, pro: e.value),
+                                CardSkinItem(
+                                    appAd: appAd, cardSkin: e.key, localDataAccess: localDataAccess, pro: e.value),
                                 const SizedBox(width: 12)
                               ]))
                           .toList()))
@@ -66,11 +69,13 @@ class _CardSkinState extends State<CardSkin> {
 }
 
 class CardSkinItem extends StatefulWidget {
+  final AppAd appAd;
   final String cardSkin;
   final LocalDataAccess localDataAccess;
   final bool pro;
 
-  const CardSkinItem({super.key, required this.cardSkin, required this.localDataAccess, this.pro = false});
+  const CardSkinItem(
+      {super.key, required this.appAd, required this.cardSkin, required this.localDataAccess, this.pro = false});
 
   @override
   State<CardSkinItem> createState() => _CardSkinItemState();
@@ -87,6 +92,14 @@ class _CardSkinItemState extends State<CardSkinItem> {
             builder: (context, state) {
               return InkWell(
                   onTap: () {
+                    if (!widget.localDataAccess.getCardRepo().contains(widget.cardSkin)) {
+                      if (widget.appAd.rwSkin < 2) {
+                        widget.appAd.loadRewardSkinAd();
+                        return;
+                      }
+                      widget.appAd.rwSkin -= 2;
+                    }
+                    widget.localDataAccess.addCardSkin(widget.cardSkin);
                     widget.localDataAccess.setCardSkin(widget.cardSkin);
                     cubit.chooseCardSkin(widget.cardSkin);
                   },

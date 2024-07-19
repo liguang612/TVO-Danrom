@@ -1,3 +1,4 @@
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
@@ -18,6 +19,7 @@ class ChooserOptions extends StatefulWidget {
 }
 
 class _ChooserOptionsState extends State<ChooserOptions> {
+  final AppAd appAd = getIt.get();
   final LocalDataAccess localDataAccess = getIt.get();
   late int winners;
 
@@ -87,10 +89,19 @@ class _ChooserOptionsState extends State<ChooserOptions> {
                                 children: List.generate(
                                     4,
                                     (index) => TextButton(
-                                        onPressed: () => setState(() {
-                                              localDataAccess.setWinners(winners = index + 1);
-                                              widget.onChanged();
-                                            }),
+                                        onPressed: () {
+                                          if (index > 0) {
+                                            if (appAd.rwWinnersOrTapmode < 1) {
+                                              appAd.loadRewardAd(context);
+                                              return;
+                                            }
+                                            appAd.rwWinnersOrTapmode--;
+                                          }
+                                          setState(() {
+                                            localDataAccess.setWinners(winners = index + 1);
+                                            widget.onChanged();
+                                          });
+                                        },
                                         style: TextButton.styleFrom(
                                             backgroundColor:
                                                 index + 1 == winners ? AppColor.white : AppColor.transparent,
@@ -120,7 +131,13 @@ class _ChooserOptionsState extends State<ChooserOptions> {
                   ]),
                   initSwitch: !localDataAccess.getTapMode(),
                   isShowSwitch: true,
-                  onSwitched: (p0) {
+                  onSwitched: (p0) async {
+                    if (p0 && appAd.rwWinnersOrTapmode < 1) {
+                      appAd.loadRewardAd(context);
+                      return;
+                    }
+                    if (p0) appAd.rwWinnersOrTapmode--;
+
                     localDataAccess.setTapMode(p0);
                     widget.onChanged();
                   },

@@ -1,5 +1,6 @@
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/data/local/shared_preferences.dart';
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/view/coin/cubit/coin_cubit.dart';
 import 'package:danrom/view/decision/card_state.dart';
 import 'package:danrom/view/decision/cubit/decision_cubit.dart';
@@ -24,4 +25,7 @@ configureInjection() async {
 
   // Data
   getIt.registerLazySingleton(() => CardState());
+
+  // Ads
+  getIt.registerLazySingleton(() => AppAd());
 }

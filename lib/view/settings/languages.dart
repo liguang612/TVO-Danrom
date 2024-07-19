@@ -12,6 +12,7 @@ import "package:danrom/shared/widget/logo.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/flutter_svg.dart";
+import "package:google_mobile_ads/google_mobile_ads.dart";
 
 class Languages extends StatefulWidget {
   const Languages({super.key});
@@ -21,6 +22,8 @@ class Languages extends StatefulWidget {
 }
 
 class _LanguagesState extends State<Languages> {
+  bool isAdLoaded = false;
+  late NativeAd nativeAd;
   late String lgValue;
   LocalDataAccess localDataAccess = getIt.get();
 
@@ -29,6 +32,24 @@ class _LanguagesState extends State<Languages> {
     super.initState();
 
     lgValue = localDataAccess.getLanguage() ?? 'system';
+
+    nativeAd = NativeAd(
+        adUnitId: 'ca-app-pub-4557719725987729/4243413324',
+        listener: NativeAdListener(
+            onAdLoaded: (ad) => setState(() => isAdLoaded = true), onAdFailedToLoad: (ad, error) => ad.dispose()),
+        nativeTemplateStyle: NativeTemplateStyle(
+            templateType: TemplateType.medium,
+            mainBackgroundColor: AppColor.white,
+            cornerRadius: 12,
+            callToActionTextStyle: NativeTemplateTextStyle(
+                textColor: AppColor.white, style: NativeTemplateFontStyle.monospace, size: 16.0),
+            primaryTextStyle: NativeTemplateTextStyle(
+                textColor: AppColor.purple01, style: NativeTemplateFontStyle.normal, size: 13.0),
+            secondaryTextStyle:
+                NativeTemplateTextStyle(style: NativeTemplateFontStyle.bold, size: 12.0, textColor: AppColor.gray13),
+            tertiaryTextStyle: NativeTemplateTextStyle(style: NativeTemplateFontStyle.normal, size: 16.0)),
+        request: const AdRequest());
+    nativeAd.load();
   }
 
   @override
@@ -139,7 +160,17 @@ class _LanguagesState extends State<Languages> {
                         localDataAccess.setLanguage(p0);
                         context.read<LanguageCubit>().change(Locale(p0));
                       },
-                      value: LanguageDisplay.arabic)
+                      value: LanguageDisplay.arabic),
+                  const SizedBox(height: 8),
+                  isAdLoaded
+                      ? ConstrainedBox(
+                          constraints: const BoxConstraints(
+                              minWidth: 320, // minimum recommended width
+                              minHeight: 90, // minimum recommended height
+                              maxWidth: 400,
+                              maxHeight: 200),
+                          child: AdWidget(ad: nativeAd))
+                      : const SizedBox()
                 ]))));
   }
 }
