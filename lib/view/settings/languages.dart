@@ -34,7 +34,7 @@ class _LanguagesState extends State<Languages> {
     lgValue = localDataAccess.getLanguage() ?? 'system';
 
     nativeAd = NativeAd(
-        adUnitId: 'ca-app-pub-4557719725987729/4243413324',
+        adUnitId: 'ca-app-pub-3940256099942544/9214589741',
         listener: NativeAdListener(
             onAdLoaded: (ad) => setState(() => isAdLoaded = true), onAdFailedToLoad: (ad, error) => ad.dispose()),
         nativeTemplateStyle: NativeTemplateStyle(

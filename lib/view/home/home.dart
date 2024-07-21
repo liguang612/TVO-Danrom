@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
 
     bannerAd = BannerAd(
         size: AdSize.banner,
-        adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+        adUnitId: 'ca-app-pub-4557719725987729/6457323751',
         listener: BannerAdListener(
             onAdLoaded: (ad) => setState(() {
                   isAdLoaded = true;

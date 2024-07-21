@@ -1,4 +1,5 @@
 import 'package:danrom/api/firebase_api.dart';
+import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
 import 'package:danrom/config/config.dart';
 import 'package:danrom/config/routes.dart';
@@ -7,7 +8,6 @@ import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
 import 'package:danrom/firebase_options.dart';
 import 'package:danrom/language_cubit.dart';
-import 'package:danrom/app_ad.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,7 +21,7 @@ Future<void> main() async {
   await MobileAds.instance.initialize();
   await configureInjection();
 
-  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ["BE14F4D9DA41BFFFBEB21E23B3DFED6B"]);
+  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ["BE14F4D9DA41BFFFBEB21E23B3DFED6B", "a4fbf4ea5a502146a2bb381f0a1d1941"]);
   MobileAds.instance.updateRequestConfiguration(requestConfiguration);
 
   runApp(const MyApp());
