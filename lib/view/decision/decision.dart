@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:danrom/app_ad.dart';
 import 'package:danrom/app_localization.dart';
+import 'package:danrom/data/constants.dart';
 import 'package:danrom/data/local/local_data_access.dart';
 import 'package:danrom/di/di.dart';
 import 'package:danrom/resources/colors.dart';
@@ -52,7 +53,7 @@ class _DecisionState extends State<Decision> {
   @override
   Widget build(BuildContext context) {
     final cardLoop = localDataAccess.getCardLoop();
-    final cardSkin = localDataAccess.getCardSkin().isEmpty ? 'light.svg' : localDataAccess.getCardSkin();
+    final cardSkin = localDataAccess.getCardSkin().isEmpty ? 'style1.svg' : localDataAccess.getCardSkin();
 
     return Scaffold(
         backgroundColor: AppColor.white,
@@ -128,23 +129,21 @@ class _DecisionState extends State<Decision> {
                                       ]),
                                       SizedBox(height: context.screenWidth * 0.066)
                                     ]),
-                                    Column(
-                                      children: [
-                                        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                                          SimpleShadow(
-                                              offset: const Offset(0, 2),
-                                              opacity: 0.25,
-                                              sigma: 2,
-                                              child: Transform.rotate(
-                                                  angle: math.pi / 180 * -3.92,
-                                                  child: SvgPicture.asset('${Assets.icCardPrototypePrefix}/$cardSkin',
-                                                      height: context.screenWidth * 211 / 393,
-                                                      width: context.screenWidth * 150 / 393))),
-                                          SizedBox(width: context.screenWidth * 0.2),
-                                        ]),
-                                        SizedBox(height: context.screenWidth * 0.052)
-                                      ],
-                                    ),
+                                    Column(children: [
+                                      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                                        SimpleShadow(
+                                            offset: const Offset(0, 2),
+                                            opacity: 0.25,
+                                            sigma: 2,
+                                            child: Transform.rotate(
+                                                angle: math.pi / 180 * -3.92,
+                                                child: SvgPicture.asset('${Assets.icCardPrototypePrefix}/$cardSkin',
+                                                    height: context.screenWidth * 211 / 393,
+                                                    width: context.screenWidth * 150 / 393))),
+                                        SizedBox(width: context.screenWidth * 0.2),
+                                      ]),
+                                      SizedBox(height: context.screenWidth * 0.052)
+                                    ]),
                                     Column(
                                       children: [
                                         SizedBox(height: context.screenWidth * 0.052),
@@ -264,7 +263,7 @@ class _CardState extends State<Card> {
   Widget build(BuildContext context) {
     return Center(
         child: Stack(alignment: AlignmentDirectional.center, children: [
-      widget.cardSkin == 'light.svg'
+      widget.cardSkin == 'style1.svg'
           ? SimpleShadow(
               offset: const Offset(0, 4),
               opacity: 0.25,
@@ -277,10 +276,10 @@ class _CardState extends State<Card> {
               BoxConstraints(maxHeight: context.screenWidth * 282.62 / 393, maxWidth: context.screenWidth * 180 / 393),
           child: ShaderMask(
               blendMode: BlendMode.srcIn,
-              shaderCallback: (bounds) => const LinearGradient(
+              shaderCallback: (bounds) => LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [AppColor.primaryColor1, AppColor.primaryColor2],
+                    colors: cardTextColor[widget.cardSkin] ?? [],
                   ).createShader(bounds),
               child: Text(widget.text, style: AppTextTheme.cardMedium, textAlign: TextAlign.center)))
     ]));

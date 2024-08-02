@@ -1,6 +1,7 @@
 {
   "Add Multiple Options": "Thêm nhiều lựa chọn",
   "Add New Option": "Thêm lựa chọn",
+  "Advanced Settings": "Cài đặt nâng cao",
   "Allow for more than 5 players": "Cho phép nhiều hơn 5 người chơi",
   "Arabic": "Tiếng Ả Rập",
   "Can't open": "Không thể mở",
@@ -13,7 +14,7 @@
   "Decision": "Quyết định",
   "Decision Making": "Tạo quyết định",
   "Disable the result automatically, it can't be drawn until reset": "Vô hiệu kết quả tự động, nó không thể bị trùng cho đến khi đặt lại",
-  "Don't ever feel alone in making decisions, Danrom will always be here to help you.": "Đừng cảm thấy cô đơn trong việc đưa ra quyết định, Danrom sẽ luôn ở đây để giúp bạn.",
+  "Don't ever feel alone in making decisions,\nDanrom will always be here to help you.": "Đừng cảm thấy cô đơn trong việc đưa ra quyết định, Danrom sẽ luôn ở đây để giúp bạn.",
   "Duplicate Results": "Kết quả trùng lặp",
   "English": "Tiếng Anh",
   "Enter any options you want, one per line, for example:\nCar\nBicycle\nTrain": "Nhập vào bất kỳ lựa chọn nào bạn muốn, mỗi lựa chọn một dòng, ví dụ:\nÔ tô\nXe đạp\nTàu hỏa",

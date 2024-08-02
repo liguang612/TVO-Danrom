@@ -16,13 +16,15 @@ class FirebaseApi {
       await _firebaseMessaging.requestPermission();
 
       final fCMToken = await _firebaseMessaging.getToken();
-      print('Token: $fCMToken');
+      print('Android Token: $fCMToken');
       FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     } else if (Platform.isIOS) {
       await _firebaseMessaging.requestPermission();
 
       final apnsToken = await _firebaseMessaging.getAPNSToken();
-      print('Token: $apnsToken');
+      print('Apple push notification service Token: $apnsToken');
+      // final fCMToken = await _firebaseMessaging.getToken();
+      // print('iOS FCM Token: $fCMToken');
       FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     }
   }

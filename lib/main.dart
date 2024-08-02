@@ -21,7 +21,8 @@ Future<void> main() async {
   await MobileAds.instance.initialize();
   await configureInjection();
 
-  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ["BE14F4D9DA41BFFFBEB21E23B3DFED6B", "a4fbf4ea5a502146a2bb381f0a1d1941"]);
+  RequestConfiguration requestConfiguration =
+      RequestConfiguration(testDeviceIds: ["BE14F4D9DA41BFFFBEB21E23B3DFED6B", "a4fbf4ea5a502146a2bb381f0a1d1941"]);
   MobileAds.instance.updateRequestConfiguration(requestConfiguration);
 
   runApp(const MyApp());
@@ -36,6 +37,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final AppAd appAd = getIt.get();
+  late final LanguageCubit cubit;
+  Locale? deviceLocale;
   LocalDataAccess localDataAccess = getIt.get();
 
   @override
@@ -47,15 +50,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     if (localDataAccess.getCardRepo().isEmpty) localDataAccess.addCardSkin(cardSkins.keys.first);
     if (localDataAccess.getCoinRepo().isEmpty) localDataAccess.addCoinSkin(coinSkins.first);
+    if (localDataAccess.getWheelChoices().isEmpty) {
+      localDataAccess.setWheelChoices(['Yes', 'No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'No']);
+    }
     if (localDataAccess.getWheelRepo().isEmpty) localDataAccess.addWheelSkin(wheelSkins.keys.first);
+
+    cubit = LanguageCubit(context);
+    var str = localDataAccess.getLanguage();
+    if (str == LanguageDisplay.system) str = null;
+    cubit.change(str == null ? null : Locale(str));
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    final AppAd appAd = getIt.get();
-    if (appAd.justHidden) {
+    if (state == AppLifecycleState.resumed && appAd.justHidden) {
       appAd.loadAppOpenAd();
       appAd.justHidden = false;
     }
@@ -65,7 +75,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => LanguageCubit(context),
+        create: (context) => cubit,
         child: BlocBuilder<LanguageCubit, Locale?>(builder: (context, state) {
           return MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -76,26 +86,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate
               ],
-              locale: state,
+              locale: state ?? deviceLocale,
               localeResolutionCallback: (locale, supportedLocales) {
-                if (state != null) {
-                  return state;
-                }
-                String? str = localDataAccess.getLanguage();
-                if (str != null && str != LanguageDisplay.system) return Locale(str);
+                deviceLocale ??= locale;
 
-                for (var supportedLocale in supportedLocales) {
-                  if (supportedLocale.languageCode == locale?.languageCode) {
-                    return supportedLocale;
-                  }
+                if (state != null) return state;
+                if (localDataAccess.getLanguage() != LanguageDisplay.system && localDataAccess.getLanguage() != null) {
+                  return Locale(localDataAccess.getLanguage()!);
                 }
-                return supportedLocales.first;
+                for (var supportedLocale in supportedLocales) {
+                  if (supportedLocale.languageCode == deviceLocale?.languageCode) return supportedLocale;
+                }
+                return deviceLocale;
               },
               supportedLocales: const [Locale('en'), Locale('ar'), Locale('id'), Locale('vi'), Locale('zh')],
               onGenerateRoute: (settings) => AppRoute.onGenerateRoute(settings),
-              onGenerateInitialRoutes: (value) {
-                return [AppRoute.onGenerateRoute(RouteSettings(name: value))!];
-              },
+              onGenerateInitialRoutes: (value) => [AppRoute.onGenerateRoute(RouteSettings(name: value))!],
               routes: AppRoute.generateRoute(),
               title: AppConfig.appName,
               theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.white), useMaterial3: true));

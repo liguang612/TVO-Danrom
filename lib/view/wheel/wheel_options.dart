@@ -37,16 +37,20 @@ class WheelOptions extends StatelessWidget {
                       spreadRadius: 0)
                 ],
                 color: AppColor.white),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Scaffold(
                 appBar: AppBar(
                     actions: [
-                      PrimaryIconButton(
-                          backgroundColor: AppColor.white,
-                          child: SvgPicture.asset(Assets.icClose),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          })
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          PrimaryIconButton(
+                              backgroundColor: AppColor.white,
+                              child: SvgPicture.asset(Assets.icClose),
+                              onPressed: () => Navigator.pop(context)),
+                        ],
+                      )
                     ],
                     backgroundColor: AppColor.white,
                     leading: Container(),
@@ -56,7 +60,7 @@ class WheelOptions extends StatelessWidget {
                 body: SingleChildScrollView(
                     child:
                         Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                  Text(AppLocalizations.of(context)?.translate('Questions') ?? '',
+                  Text(AppLocalizations.of(context)?.translate('Question') ?? '',
                       style: AppTextTheme.descriptionBoldSemiLarge),
                   const SizedBox(height: 8),
                   BlocBuilder<WheelCubit, WheelState>(builder: (context, state) {
@@ -80,7 +84,7 @@ class WheelOptions extends StatelessWidget {
                   const SizedBox(height: 8),
                   const WheelChoices(),
                   const SizedBox(height: 20),
-                  Text(AppLocalizations.of(context)?.translate('Options') ?? '',
+                  Text(AppLocalizations.of(context)?.translate('Advanced Settings') ?? '',
                       style: AppTextTheme.descriptionBoldSemiLarge),
                   const SizedBox(height: 8),
                   OptionItem(
@@ -95,9 +99,7 @@ class WheelOptions extends StatelessWidget {
                       ]),
                       initSwitch: localDataAccess.getWheelLoop(),
                       isShowSwitch: true,
-                      onSwitched: (p0) {
-                        cubit.changeLoopable(!p0);
-                      },
+                      onSwitched: (p0) => cubit.changeLoopable(!p0),
                       prefixIcon: SvgPicture.asset(Assets.icNoLoop)),
                   const SizedBox(height: 16),
                   OptionItem(
@@ -120,7 +122,11 @@ class WheelOptions extends StatelessWidget {
                                 shape: MaterialStatePropertyAll(
                                     RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
                                 child: SvgPicture.asset(Assets.icMinus))),
-                        SizedBox(width: context.screenWidth * 12 / 393),
+                        SizedBox(width: context.screenWidth * 10 / 393),
+                        BlocBuilder<WheelCubit, WheelState>(
+                            builder: (context, state) =>
+                                Text('${localDataAccess.getWheelDuration()}s', style: AppTextTheme.optionBodyMedium)),
+                        SizedBox(width: context.screenWidth * 10 / 393),
                         SizedBox(
                             height: context.screenWidth * 28 / 393,
                             width: context.screenWidth * 28 / 393,
@@ -135,7 +141,7 @@ class WheelOptions extends StatelessWidget {
                                 },
                                 shape: MaterialStatePropertyAll(
                                     RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                                child: SvgPicture.asset(Assets.icPlus)))
+                                child: SvgPicture.asset(Assets.icPlus))),
                       ])),
                   const SizedBox(height: 16),
                   Bouncing(

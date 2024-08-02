@@ -19,7 +19,7 @@ class AppRoute {
         AppRoute.home: (context) => const HomePage(),
         AppRoute.cardSkin: (context) => const CardSkin(),
         AppRoute.language: (context) => const Languages(),
-        AppRoute.settings: (context) => Settings()
+        AppRoute.settings: (context) => const Settings()
       };
 
   static Route? onGenerateRoute(RouteSettings settings) {

@@ -8,9 +8,17 @@ class AppAd {
   bool justHidden = false;
   int interstitialAdCount = 0, rwSkin = 0, rwWinnersOrTapmode = 0;
   InterstitialAd? interstitialAd;
+  NativeAd? nativeAd;
   RewardedAd? rewardedAd, rewardedSkinAd;
 
   AppAd() {
+    AppOpenAd.load(
+        adUnitId: 'ca-app-pub-3940256099942544/9257395921',
+        adLoadCallback: AppOpenAdLoadCallback(
+            onAdLoaded: (ad) => appOpenAd = ad, onAdFailedToLoad: (error) => print('Open ad error $error')),
+        orientation: AppOpenAd.orientationPortrait,
+        request: const AdRequest());
+
     InterstitialAd.load(
         adUnitId: 'ca-app-pub-3940256099942544/1033173712',
         request: const AdRequest(),
@@ -18,8 +26,15 @@ class AppAd {
             onAdLoaded: (ad) => interstitialAd = ad,
             onAdFailedToLoad: (error) {
               interstitialAd!.dispose();
-              // print("Interstitial Ad error: $error");
+              print("Interstitial Ad error: $error");
             }));
+
+    nativeAd = NativeAd(
+        adUnitId: 'ca-app-pub-3940256099942544/2247696110',
+        factoryId: 'ListTile',
+        listener: NativeAdListener(onAdLoaded: null, onAdFailedToLoad: (ad, error) => print('Native ad error: $error')),
+        request: const AdRequest());
+    nativeAd?.load();
 
     RewardedAd.load(
         adUnitId: 'ca-app-pub-3940256099942544/5224354917',
@@ -57,11 +72,12 @@ class AppAd {
       ad.dispose();
     });
 
+    print('App-open app is showinggggg');
     appOpenAd!.show();
 
     // Refresh ad
     appOpenAd = null;
-    loadAppOpenAd();
+    await loadAppOpenAd();
   }
 
   loadInterstitialAd() async {
@@ -79,6 +95,15 @@ class AppAd {
             print("Interstitial Ad error: $error");
           }));
     }
+  }
+
+  loadNativeAd() async {
+    nativeAd = NativeAd(
+        adUnitId: 'ca-app-pub-3940256099942544/2247696110',
+        factoryId: 'ListTile',
+        listener: NativeAdListener(onAdLoaded: null, onAdFailedToLoad: (ad, error) => print('Native ad error: $error')),
+        request: const AdRequest());
+    nativeAd?.load();
   }
 
   loadRewardAd(BuildContext context) async {

@@ -124,7 +124,8 @@ class _CardSkinItemState extends State<CardSkinItem> {
                                   offset: const Offset(0, 4),
                                   opacity: 0.25,
                                   sigma: 3,
-                                  child: SvgPicture.asset('${Assets.icCardPrototypePrefix}/${widget.cardSkin}'))),
+                                  child: SvgPicture.asset('${Assets.icCardPrototypePrefix}/${widget.cardSkin}',
+                                      width: context.screenWidth * 90 / 393))),
                           ShaderMask(
                               shaderCallback: (Rect bounds) {
                                 return LinearGradient(

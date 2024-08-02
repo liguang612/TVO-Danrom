@@ -1,3 +1,4 @@
+import "package:danrom/app_ad.dart";
 import "package:danrom/app_localization.dart";
 import "package:danrom/config/routes.dart";
 import "package:danrom/data/constants.dart";
@@ -9,7 +10,9 @@ import "package:danrom/resources/resources.dart";
 import "package:danrom/resources/themes.dart";
 import "package:danrom/shared/utils/dart_extensions.dart";
 import "package:danrom/shared/widget/logo.dart";
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:flutter/widgets.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/flutter_svg.dart";
 import "package:google_mobile_ads/google_mobile_ads.dart";
@@ -22,8 +25,8 @@ class Languages extends StatefulWidget {
 }
 
 class _LanguagesState extends State<Languages> {
-  bool isAdLoaded = false;
-  late NativeAd nativeAd;
+  AppAd appAd = getIt.get();
+  bool isAdLoaded = false, firstlyAppear = false;
   late String lgValue;
   LocalDataAccess localDataAccess = getIt.get();
 
@@ -31,25 +34,9 @@ class _LanguagesState extends State<Languages> {
   void initState() {
     super.initState();
 
+    if (appAd.nativeAd == null) appAd.loadNativeAd();
+    firstlyAppear = (localDataAccess.getLanguage() == null);
     lgValue = localDataAccess.getLanguage() ?? 'system';
-
-    nativeAd = NativeAd(
-        adUnitId: 'ca-app-pub-3940256099942544/9214589741',
-        listener: NativeAdListener(
-            onAdLoaded: (ad) => setState(() => isAdLoaded = true), onAdFailedToLoad: (ad, error) => ad.dispose()),
-        nativeTemplateStyle: NativeTemplateStyle(
-            templateType: TemplateType.medium,
-            mainBackgroundColor: AppColor.white,
-            cornerRadius: 12,
-            callToActionTextStyle: NativeTemplateTextStyle(
-                textColor: AppColor.white, style: NativeTemplateFontStyle.monospace, size: 16.0),
-            primaryTextStyle: NativeTemplateTextStyle(
-                textColor: AppColor.purple01, style: NativeTemplateFontStyle.normal, size: 13.0),
-            secondaryTextStyle:
-                NativeTemplateTextStyle(style: NativeTemplateFontStyle.bold, size: 12.0, textColor: AppColor.gray13),
-            tertiaryTextStyle: NativeTemplateTextStyle(style: NativeTemplateFontStyle.normal, size: 16.0)),
-        request: const AdRequest());
-    nativeAd.load();
   }
 
   @override
@@ -67,15 +54,19 @@ class _LanguagesState extends State<Languages> {
                   height: context.screenWidth * 33 / 393,
                   padding: EdgeInsets.zero,
                   child: TextButton(
-                      onPressed: localDataAccess.getLanguage() == null
+                      onPressed: firstlyAppear
                           ? () {
-                              if (localDataAccess.getLanguage() == null) {
-                                localDataAccess.setLanguage(LanguageDisplay.system);
-                              }
+                              localDataAccess.setLanguage(lgValue);
                               Navigator.popAndPushNamed(context, AppRoute.home);
                             }
-                          : () => Navigator.pop(context),
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero, shadowColor: AppColor.transparent),
+                          : () {
+                              localDataAccess.setLanguage(lgValue);
+                              Navigator.pop(context);
+                            },
+                      style: TextButton.styleFrom(
+                          minimumSize: const Size(0, 0),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          shadowColor: AppColor.transparent),
                       child: Text(AppLocalizations.of(context)?.translate('Next') ?? '',
                           style: AppTextTheme.interSemiBold14.copyWith(color: AppColor.white)))),
               const SizedBox(width: 16)
@@ -87,91 +78,97 @@ class _LanguagesState extends State<Languages> {
                 size: 24,
                 style: AppTextTheme.gradientTextStyle.copyWith(fontFamily: 'Poppins'),
                 text: AppLocalizations.of(context)?.translate('Languages') ?? '')),
-        body: SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.all(13),
-                child: Column(children: [
-                  LanguageItem(
-                      country: AppLocalizations.of(context)?.translate('System Language') ?? '',
-                      groupValue: lgValue,
-                      languageIcon: Assets.lgSystem,
-                      onTap: (p0) {
-                        setState(() => lgValue = p0);
-                        localDataAccess.setLanguage(p0);
-                        context.read<LanguageCubit>().change(null);
-                      },
-                      value: LanguageDisplay.system),
-                  const SizedBox(height: 8),
-                  LanguageItem(
-                      country: AppLocalizations.of(context)?.translate('English') ?? '',
-                      groupValue: lgValue,
-                      language: 'English',
-                      languageIcon: Assets.lgEnglish,
-                      onTap: (p0) {
-                        setState(() => lgValue = p0);
-                        localDataAccess.setLanguage(p0);
-                        context.read<LanguageCubit>().change(Locale(p0));
-                      },
-                      value: LanguageDisplay.english),
-                  const SizedBox(height: 8),
-                  LanguageItem(
-                      country: AppLocalizations.of(context)?.translate('Chinese') ?? '',
-                      groupValue: lgValue,
-                      language: '简体中文',
-                      languageIcon: Assets.lgChinese,
-                      onTap: (p0) {
-                        setState(() => lgValue = p0);
-                        localDataAccess.setLanguage(p0);
-                        context.read<LanguageCubit>().change(Locale(p0));
-                      },
-                      value: LanguageDisplay.chinese),
-                  const SizedBox(height: 8),
-                  LanguageItem(
-                      country: AppLocalizations.of(context)?.translate('Indonesian') ?? '',
-                      groupValue: lgValue,
-                      language: 'Bahasa Indonesia',
-                      languageIcon: Assets.lgIndonesian,
-                      onTap: (p0) {
-                        setState(() => lgValue = p0);
-                        localDataAccess.setLanguage(p0);
-                        context.read<LanguageCubit>().change(Locale(p0));
-                      },
-                      value: LanguageDisplay.indonesian),
-                  const SizedBox(height: 8),
-                  LanguageItem(
-                      country: AppLocalizations.of(context)?.translate('Vietnamese') ?? '',
-                      groupValue: lgValue,
-                      language: 'Tiếng Việt',
-                      languageIcon: Assets.lgVietnamese,
-                      onTap: (p0) {
-                        setState(() => lgValue = p0);
-                        localDataAccess.setLanguage(p0);
-                        context.read<LanguageCubit>().change(Locale(p0));
-                      },
-                      value: LanguageDisplay.vietnamese),
-                  const SizedBox(height: 8),
-                  LanguageItem(
-                      country: AppLocalizations.of(context)?.translate('Arabic') ?? '',
-                      groupValue: lgValue,
-                      language: 'العربية',
-                      languageIcon: Assets.lgArabic,
-                      onTap: (p0) {
-                        setState(() => lgValue = p0);
-                        localDataAccess.setLanguage(p0);
-                        context.read<LanguageCubit>().change(Locale(p0));
-                      },
-                      value: LanguageDisplay.arabic),
-                  const SizedBox(height: 8),
-                  isAdLoaded
-                      ? ConstrainedBox(
-                          constraints: const BoxConstraints(
-                              minWidth: 320, // minimum recommended width
-                              minHeight: 90, // minimum recommended height
-                              maxWidth: 400,
-                              maxHeight: 200),
-                          child: AdWidget(ad: nativeAd))
-                      : const SizedBox()
-                ]))));
+        body: Column(children: [
+          Expanded(
+              child: SingleChildScrollView(
+                  child: Padding(
+                      padding: const EdgeInsets.all(13),
+                      child: Column(children: [
+                        LanguageItem(
+                            country: AppLocalizations.of(context)?.translate('System Language') ?? '',
+                            groupValue: lgValue,
+                            languageIcon: Assets.lgSystem,
+                            onTap: (p0) {
+                              setState(() => localDataAccess.setLanguage(lgValue = p0));
+                              context.read<LanguageCubit>().change(null);
+                            },
+                            value: LanguageDisplay.system),
+                        const SizedBox(height: 8),
+                        LanguageItem(
+                            country: AppLocalizations.of(context)?.translate('English') ?? '',
+                            groupValue: lgValue,
+                            language: 'English',
+                            languageIcon: Assets.lgEnglish,
+                            onTap: (p0) {
+                              setState(() => localDataAccess.setLanguage(lgValue = p0));
+                              context.read<LanguageCubit>().change(Locale(p0));
+                            },
+                            value: LanguageDisplay.english),
+                        const SizedBox(height: 8),
+                        LanguageItem(
+                            country: AppLocalizations.of(context)?.translate('Chinese') ?? '',
+                            groupValue: lgValue,
+                            language: '简体中文',
+                            languageIcon: Assets.lgChinese,
+                            onTap: (p0) {
+                              setState(() => localDataAccess.setLanguage(lgValue = p0));
+                              context.read<LanguageCubit>().change(Locale(p0));
+                            },
+                            value: LanguageDisplay.chinese),
+                        const SizedBox(height: 8),
+                        LanguageItem(
+                            country: AppLocalizations.of(context)?.translate('Indonesian') ?? '',
+                            groupValue: lgValue,
+                            language: 'Bahasa Indonesia',
+                            languageIcon: Assets.lgIndonesian,
+                            onTap: (p0) {
+                              setState(() => localDataAccess.setLanguage(lgValue = p0));
+                              context.read<LanguageCubit>().change(Locale(p0));
+                            },
+                            value: LanguageDisplay.indonesian),
+                        const SizedBox(height: 8),
+                        LanguageItem(
+                            country: AppLocalizations.of(context)?.translate('Vietnamese') ?? '',
+                            groupValue: lgValue,
+                            language: 'Tiếng Việt',
+                            languageIcon: Assets.lgVietnamese,
+                            onTap: (p0) {
+                              setState(() => localDataAccess.setLanguage(lgValue = p0));
+                              context.read<LanguageCubit>().change(Locale(p0));
+                            },
+                            value: LanguageDisplay.vietnamese),
+                        const SizedBox(height: 8),
+                        LanguageItem(
+                            country: AppLocalizations.of(context)?.translate('Arabic') ?? '',
+                            groupValue: lgValue,
+                            language: 'العربية',
+                            languageIcon: Assets.lgArabic,
+                            onTap: (p0) {
+                              setState(() => localDataAccess.setLanguage(lgValue = p0));
+                              context.read<LanguageCubit>().change(Locale(p0));
+                            },
+                            value: LanguageDisplay.arabic),
+                        const SizedBox(height: 8),
+                      ])))),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: appAd.nativeAd != null
+                ? Container(
+                    constraints: BoxConstraints(maxHeight: context.screenWidth / 393 * 259),
+                    child: AdWidget(ad: appAd.nativeAd!))
+                : Container(
+                    height: 90,
+                    width: context.screenWidth,
+                    color: Colors.grey[300], // Placeholder color
+                    child: const Center(child: CircularProgressIndicator())),
+          )
+        ]));
+  }
+
+  @override
+  void dispose() {
+    appAd.loadNativeAd();
+    super.dispose();
   }
 }
 

@@ -14,7 +14,24 @@ class LanguageDisplay {
 
 Map<String, String> languageDisplayStr = {'en': 'English', 'vi': 'Tiếng Việt'};
 
-Map<String, bool> cardSkins = {'light.svg': false, 'dark.svg': true}; // 0: normal, 1: pro
+Map<String, bool> cardSkins = {
+  'style1.svg': false,
+  'style2.svg': true,
+  'style3.svg': true,
+  'style4.svg': true,
+  'style5.svg': true,
+  'style6.svg': true,
+  'style7.svg': true
+}; // 0: normal, 1: pro
+Map<String, List<Color>> cardTextColor = {
+  'style1.svg': [AppColor.primaryColor1, AppColor.primaryColor2],
+  'style2.svg': [AppColor.primaryColor1, AppColor.primaryColor2],
+  'style3.svg': [AppColor.yellow1, AppColor.yellow1],
+  'style4.svg': [AppColor.yellow2, AppColor.yellow2],
+  'style5.svg': [AppColor.purple02, AppColor.purple02],
+  'style6.svg': [AppColor.white, AppColor.white],
+  'style7.svg': [AppColor.yellow3, AppColor.yellow3]
+}; // 0: normal, 1: pro
 
 final List<String> coinSkins = ['dollar', 'indian_rupee', 'test'];
 

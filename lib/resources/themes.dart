@@ -25,7 +25,9 @@ class AppTextTheme {
 
   static const logoBoldLarge = TextStyle(fontFamily: 'Spartan', fontWeight: FontWeight.w700, fontSize: 30);
 
+  static const interBold20 = TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 20);
   static const interMedium11 = TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, fontSize: 11);
+  static const interMedium16 = TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, fontSize: 16);
   static const interSemiBold14 = TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 14);
   static const interRegular20 =
       TextStyle(color: AppColor.black, fontFamily: 'Inter', fontWeight: FontWeight.w400, fontSize: 20);
@@ -45,6 +47,8 @@ class AppTextTheme {
 
   static const optionBodyRegular = TextStyle(
       color: AppColor.gray03, fontFamily: 'Montserrat', fontSize: 11, fontVariations: [FontVariation.weight(500)]);
+  static const optionBodyMedium = TextStyle(
+      color: AppColor.black, fontFamily: 'Montserrat', fontSize: 14, fontVariations: [FontVariation.weight(500)]);
   static const optionTitleMedium = TextStyle(
       color: AppColor.black, fontFamily: 'Montserrat', fontSize: 16, fontVariations: [FontVariation.weight(500)]);
 

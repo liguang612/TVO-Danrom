@@ -45,6 +45,7 @@ dependencies:
   google_mobile_ads: ^2.3.0
   in_app_review: ^2.0.9
   lottie: ^3.1.0
+  permission_handler: ^11.3.1
   share_plus: ^9.0.0
   shared_preferences: ^2.2.2
   simple_shadow: ^0.3.1
@@ -121,13 +122,13 @@ flutter:
     - family: Montserrat
       fonts:
         - asset: assets/fonts/Montserrat-Variable.ttf
-        # - asset: assets/fonts/Montserrat-Bold.ttf
-        # - asset: assets/fonts/Montserrat-Light.ttf
-        # - asset: assets/fonts/Montserrat-Medium.ttf
-        # - asset: assets/fonts/Montserrat-Regular.ttf
     - family: NotoSans
       fonts:
         - asset: assets/fonts/NotoSans-Variable.ttf
     - family: RobotoFlex
       fonts:
         - asset: assets/fonts/RobotoFlex.ttf
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/im_icon_app.png"

@@ -122,12 +122,12 @@ class SharePrefHelper implements LocalDataAccess {
   // Wheel
   @override
   List<String> getWheelChoices() {
-    return sharedPref.getStringList(SharedPreferenceKey.wheelChoices) ?? ['Opt 1', 'Opt 2'];
+    return sharedPref.getStringList(SharedPreferenceKey.wheelChoices) ?? [];
   }
 
   @override
   int getWheelDuration() {
-    return sharedPref.getInt(SharedPreferenceKey.wheelDuration) ?? 4;
+    return sharedPref.getInt(SharedPreferenceKey.wheelDuration) ?? 5;
   }
 
   @override

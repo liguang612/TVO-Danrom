@@ -7,7 +7,6 @@ import 'package:danrom/di/di.dart';
 import 'package:danrom/resources/colors.dart';
 import 'package:danrom/resources/resources.dart';
 import 'package:danrom/resources/themes.dart';
-import 'package:danrom/shared/utils/dart_extensions.dart';
 import 'package:danrom/shared/widget/bouncing.dart';
 import 'package:danrom/shared/widget/primary_icon_button.dart';
 import 'package:flutter/material.dart';
@@ -41,45 +40,45 @@ class _SettingsState extends State<Settings> {
             child: Padding(
           padding: const EdgeInsets.all(32),
           child: Column(children: [
-            Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: AppColor.gray10,
-                  image: const DecorationImage(
-                      image: AssetImage(Assets.imDanromPremium),
-                      alignment: Alignment.centerRight,
-                      fit: BoxFit.fitHeight)),
-              // height: context.screenWidth * 134 / 393,
-              width: context.screenWidth,
-              child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: LinearGradient(colors: [
-                        AppColor.gray11,
-                        AppColor.gray11.withOpacity(0.9132),
-                        AppColor.gray11.withOpacity(0)
-                      ])),
-                  // height: context.screenWidth * 134 / 393,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                  width: context.screenWidth * 328 / 393,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Danrom Premium', style: AppTextTheme.notosansBold18),
-                        Text(AppLocalizations.of(context)?.translate('Unlimited, faster & better') ?? '',
-                            style: AppTextTheme.notosansRegular16),
-                        const SizedBox(height: 14),
-                        TextButton(
-                          onPressed: () {},
-                          style: const ButtonStyle(
-                              backgroundColor: MaterialStatePropertyAll(AppColor.white),
-                              padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 12, vertical: 2))),
-                          child: Text(AppLocalizations.of(context)?.translate('Try from \$0.99') ?? '',
-                              style: AppTextTheme.notosansBold12),
-                        )
-                      ])),
-            ),
+            // Container(
+            //   decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(16),
+            //       color: AppColor.gray10,
+            //       image: const DecorationImage(
+            //           image: AssetImage(Assets.imDanromPremium),
+            //           alignment: Alignment.centerRight,
+            //           fit: BoxFit.fitHeight)),
+            //   // height: context.screenWidth * 134 / 393,
+            //   width: context.screenWidth,
+            //   child: Container(
+            //       decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(16),
+            //           gradient: LinearGradient(colors: [
+            //             AppColor.gray11,
+            //             AppColor.gray11.withOpacity(0.9132),
+            //             AppColor.gray11.withOpacity(0)
+            //           ])),
+            //       // height: context.screenWidth * 134 / 393,
+            //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            //       width: context.screenWidth * 328 / 393,
+            //       child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             const Text('Danrom Premium', style: AppTextTheme.notosansBold18),
+            //             Text(AppLocalizations.of(context)?.translate('Unlimited, faster & better') ?? '',
+            //                 style: AppTextTheme.notosansRegular16),
+            //             const SizedBox(height: 14),
+            //             TextButton(
+            //               onPressed: () {},
+            //               style: const ButtonStyle(
+            //                   backgroundColor: MaterialStatePropertyAll(AppColor.white),
+            //                   padding: MaterialStatePropertyAll(EdgeInsets.symmetric(horizontal: 12, vertical: 2))),
+            //               child: Text(AppLocalizations.of(context)?.translate('Try from \$0.99') ?? '',
+            //                   style: AppTextTheme.notosansBold12),
+            //             )
+            //           ])),
+            // ),
             SettingItem(
                 prefixIcon: SvgPicture.asset(Assets.icLanguage),
                 label: AppLocalizations.of(context)?.translate('Language') ?? '',

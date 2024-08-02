@@ -28,6 +28,7 @@ class Assets {
   static const String icMinus = '$iconPrefix/ic_minus.svg';
   static const String icMultiple = '$iconPrefix/ic_multiple.svg';
   static const String icNoLoop = '$iconPrefix/ic_no_loop.svg';
+  static const String icNotiPermission = '$iconPrefix/ic_noti_permission.svg';
   static const String icNumber = '$iconPrefix/ic_number.svg';
   static const String icNumberSelected = '$iconPrefix/ic_number_selected.svg';
   static const String icPlus = '$iconPrefix/ic_plus.svg';

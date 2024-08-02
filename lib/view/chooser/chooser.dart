@@ -35,11 +35,13 @@ class _ChooserState extends State<Chooser> {
   @override
   void initState() {
     super.initState();
-    startCountdown();
-    endCountdown();
 
     body = MultiChooser(
-        key: bodyKey, getStart: getStart, getEnd: getEnd, startCountdown: startCountdown, endCountdown: endCountdown);
+        key: bodyKey, getStart: getStart, getEnd: getEnd, startCountdown: startCountdown, endCountdown: endCountDown);
+    countDown = 3;
+
+    timer = Timer.periodic(const Duration(), (timer) {});
+    timer.cancel();
   }
 
   @override
@@ -87,12 +89,10 @@ class _ChooserState extends State<Chooser> {
                     Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(100),
-                            gradient: timer.isActive || localDataAccess.getTapMode()
-                                ? const LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    colors: [AppColor.primaryColor1, AppColor.primaryColor2],
-                                    end: Alignment.bottomRight)
-                                : null),
+                            gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                colors: [AppColor.primaryColor1, AppColor.primaryColor2],
+                                end: Alignment.bottomRight)),
                         child: ElevatedButton(
                             onPressed: () {
                               if (countDown > 0) {
@@ -102,12 +102,11 @@ class _ChooserState extends State<Chooser> {
                                   bodyKey.currentState?.startProc();
                                 });
                               } else {
-                                if (localDataAccess.getTapMode()) {
-                                  setState(() {
-                                    countDown = 3;
-                                    bodyKey.currentState?.reset();
-                                  });
-                                }
+                                setState(() {
+                                  bodyKey.currentState?.reset();
+                                  countDown = 3;
+                                  started = false;
+                                });
                               }
                             },
                             style: ElevatedButton.styleFrom(
@@ -117,9 +116,7 @@ class _ChooserState extends State<Chooser> {
                             child: Text(
                                 countDown > 0
                                     ? '${AppLocalizations.of(context)?.translate('Start')} ${timer.isActive ? '($countDown)' : ''}'
-                                    : localDataAccess.getTapMode()
-                                        ? AppLocalizations.of(context)?.translate('Reset') ?? ''
-                                        : AppLocalizations.of(context)?.translate('Start') ?? '',
+                                    : AppLocalizations.of(context)?.translate('Reset') ?? '',
                                 style: AppTextTheme.descriptionSemiBoldSmall.copyWith(color: AppColor.white))))
                   ])
               ]))
@@ -133,28 +130,21 @@ class _ChooserState extends State<Chooser> {
   }
 
   getStart() {
-    if (!started) {
-      setState(() {
-        started = true;
-      });
-    }
+    if (!started) setState(() => started = true);
   }
 
   getEnd() {
-    if (started) {
-      setState(() {
-        started = false;
-      });
-    }
+    if (started) setState(() => started = false);
   }
 
   void startCountdown() {
+    if (timer.isActive) return;
+
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (countDown > 0) {
           countDown--;
         } else {
-          if (!localDataAccess.getTapMode()) countDown = 3;
           timer.cancel();
           bodyKey.currentState?.startProc();
         }
@@ -162,11 +152,9 @@ class _ChooserState extends State<Chooser> {
     });
   }
 
-  void endCountdown() {
+  void endCountDown() {
     timer.cancel();
-    setState(() {
-      countDown = 3;
-    });
+    setState(() => countDown = 3);
   }
 }
 
@@ -199,6 +187,15 @@ class _MultiChooserState extends State<MultiChooser> {
   List<int> results = [];
 
   @override
+  void initState() {
+    super.initState();
+
+    // Avoid unintialized
+    procTimer = Timer.periodic(const Duration(), (timer) {});
+    procTimer.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RawGestureDetector(
         gestures: <Type, GestureRecognizerFactory>{
@@ -206,6 +203,12 @@ class _MultiChooserState extends State<MultiChooser> {
               GestureRecognizerFactoryWithHandlers<ImmediateMultiDragGestureRecognizer>(
                   () => ImmediateMultiDragGestureRecognizer(), (ImmediateMultiDragGestureRecognizer instance) {
             instance.onStart = (Offset offset) {
+              if (countDown < 6) return null;
+              if (!localDataAccess.getTapMode() && fingers.length >= 5) return null;
+
+              widget.endCountdown();
+              widget.startCountdown();
+
               setState(() {
                 countDown = 6;
                 fingers.add(offset);
@@ -213,14 +216,12 @@ class _MultiChooserState extends State<MultiChooser> {
               });
 
               if (fingers.length > localDataAccess.getWinners()) {
-                widget.endCountdown();
                 widget.startCountdown();
+              } else if (fingers.isEmpty) {
+                widget.getEnd();
               } else {
                 widget.getStart();
               }
-              try {
-                procTimer.cancel();
-              } catch (e) {}
               return ItemDrag(
                   offset, (p0, p1) => onDrag(p0, p1), (p0) => localDataAccess.getTapMode() ? null : onEndDrag(p0));
             };
@@ -264,24 +265,25 @@ class _MultiChooserState extends State<MultiChooser> {
             ])));
   }
 
+  @override
+  void dispose() {
+    procTimer.cancel();
+    super.dispose();
+  }
+
   void onDrag(Offset oldOffset, Offset newOffset) {
     setState(() => fingers[fingers.indexOf(oldOffset)] = newOffset);
   }
 
   void onEndDrag(Offset details) {
-    widget.endCountdown();
-    try {
-      procTimer.cancel();
-    } catch (e) {}
+    if (countDown < 6) return;
 
-    results.clear();
-    setState(() {
-      fingers.remove(details);
-    });
-    if (fingers.length > localDataAccess.getWinners() && fingers.isNotEmpty) {
+    setState(() => fingers.remove(details));
+    if (fingers.length > localDataAccess.getWinners()) {
       widget.startCountdown();
-    } else if (fingers.isEmpty) {
-      widget.getEnd();
+    } else {
+      widget.endCountdown();
+      if (fingers.isEmpty) widget.getEnd();
     }
 
     countDown = 6;
@@ -391,6 +393,7 @@ class ItemDrag extends Drag {
   @override
   void update(DragUpdateDetails details) {
     super.update(details);
+
     onUpdate(offset, details.localPosition);
     offset = details.localPosition;
   }
@@ -401,21 +404,3 @@ class ItemDrag extends Drag {
     onEnd(offset);
   }
 }
-
-// class Chooser extends StatefulWidget {
-//   const Chooser({super.key});
-
-//   @override
-//   State<Chooser> createState() => _ChooserState();
-// }
-
-// class _ChooserState extends State<Chooser> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Center(
-//         child: Text('Chooser'),
-//       ),
-//     );
-//   }
-// }

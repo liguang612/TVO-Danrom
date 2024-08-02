@@ -13,6 +13,7 @@ import 'package:danrom/view/wheel/wheel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,7 +24,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late BannerAd bannerAd;
-  int currentPageIndex = 0;
+  int currentPageIndex = 2;
   bool isAdLoaded = false;
   final pages = [const Wheel(), const Chooser(), const Decision(), const Number(), const Coin()];
 
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
 
     bannerAd = BannerAd(
         size: AdSize.banner,
-        adUnitId: 'ca-app-pub-4557719725987729/6457323751',
+        adUnitId: 'ca-app-pub-3940256099942544/9214589741',
         listener: BannerAdListener(
             onAdLoaded: (ad) => setState(() {
                   isAdLoaded = true;
@@ -43,13 +44,19 @@ class _HomePageState extends State<HomePage> {
             }),
         request: const AdRequest());
     bannerAd.load();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkNotificationPermission());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(actions: [
-          IconButton(onPressed: () {}, icon: SvgPicture.asset(Assets.icPro)),
+          // IconButton(
+          //     onPressed: () {
+          //       checkNotificationPermission();
+          //     },
+          //     icon: SvgPicture.asset(Assets.icPro)),
           IconButton(
               onPressed: () => Navigator.pushNamed(context, AppRoute.settings),
               icon: SvgPicture.asset(Assets.icSettings, color: AppColor.gray01))
@@ -87,10 +94,61 @@ class _HomePageState extends State<HomePage> {
               showUnselectedLabels: true,
               unselectedFontSize: 12,
               unselectedItemColor: AppColor.black,
-              unselectedLabelStyle: AppTextTheme.descriptionSemiBoldSmall.copyWith(fontWeight: FontWeight.w400)),
+              unselectedLabelStyle: AppTextTheme.descriptionSemiBoldSmall.copyWith(fontWeight: FontWeight.w400),
+              type: BottomNavigationBarType.fixed),
           if (isAdLoaded)
             SizedBox(height: bannerAd.size.height.toDouble(), width: context.screenWidth, child: AdWidget(ad: bannerAd))
         ]),
         resizeToAvoidBottomInset: false);
+  }
+
+  Future<void> checkNotificationPermission() async {
+    var isGranted = await Permission.notification.status.isGranted;
+
+    if (!isGranted && mounted) {
+      showDialog(
+          context: context,
+          builder: (context) => Dialog(
+              backgroundColor: AppColor.white,
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 24),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    SvgPicture.asset(Assets.icNotiPermission),
+                    const SizedBox(height: 24),
+                    const Text('Notification', style: AppTextTheme.interBold20),
+                    const SizedBox(height: 24),
+                    Text('Please enable notifications to receive updates and reminders',
+                        style: AppTextTheme.interMedium16.copyWith(color: AppColor.gray14),
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 36),
+                    Container(
+                        constraints: BoxConstraints(minWidth: context.screenWidth),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            gradient: const LinearGradient(
+                                colors: [AppColor.primaryColor1, AppColor.primaryColor2],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight)),
+                        padding: EdgeInsets.zero,
+                        child: TextButton(
+                            onPressed: () async {
+                              if (await Permission.notification.request() == PermissionStatus.permanentlyDenied) {
+                                openAppSettings();
+                              }
+                              if (context.mounted) Navigator.pop(context);
+                            },
+                            child: Text('Turn on', style: AppTextTheme.cardMedium.copyWith(color: AppColor.white)))),
+                    const SizedBox(height: 12),
+                    Container(
+                        constraints: BoxConstraints(minWidth: context.screenWidth),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: AppColor.black01), borderRadius: BorderRadius.circular(50)),
+                        padding: EdgeInsets.zero,
+                        child: TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child:
+                                Text('Skip for now', style: AppTextTheme.cardMedium.copyWith(color: AppColor.black01))))
+                  ]))));
+    }
   }
 }
