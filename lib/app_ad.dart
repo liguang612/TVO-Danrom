@@ -31,8 +31,15 @@ class AppAd {
 
     nativeAd = NativeAd(
         adUnitId: 'ca-app-pub-3940256099942544/2247696110',
-        factoryId: 'ListTile',
+        // factoryId: 'ListTile',
         listener: NativeAdListener(onAdLoaded: null, onAdFailedToLoad: (ad, error) => print('Native ad error: $error')),
+        nativeTemplateStyle: NativeTemplateStyle(
+            cornerRadius: 8,
+            primaryTextStyle:
+                NativeTemplateTextStyle(style: NativeTemplateFontStyle.normal, size: 13, textColor: AppColor.purple01),
+            secondaryTextStyle:
+                NativeTemplateTextStyle(style: NativeTemplateFontStyle.normal, size: 13, textColor: AppColor.purple01),
+            templateType: TemplateType.medium),
         request: const AdRequest());
     nativeAd?.load();
 
@@ -100,8 +107,15 @@ class AppAd {
   loadNativeAd() async {
     nativeAd = NativeAd(
         adUnitId: 'ca-app-pub-3940256099942544/2247696110',
-        factoryId: 'ListTile',
+        // factoryId: 'ListTile',
         listener: NativeAdListener(onAdLoaded: null, onAdFailedToLoad: (ad, error) => print('Native ad error: $error')),
+        nativeTemplateStyle: NativeTemplateStyle(
+            cornerRadius: 8,
+            primaryTextStyle:
+                NativeTemplateTextStyle(style: NativeTemplateFontStyle.normal, size: 13, textColor: AppColor.purple01),
+            secondaryTextStyle:
+                NativeTemplateTextStyle(style: NativeTemplateFontStyle.normal, size: 13, textColor: AppColor.purple01),
+            templateType: TemplateType.medium),
         request: const AdRequest());
     nativeAd?.load();
   }

@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
               onPressed: () => Navigator.pushNamed(context, AppRoute.settings),
               icon: SvgPicture.asset(Assets.icSettings, color: AppColor.gray01))
-        ], backgroundColor: AppColor.white, title: const Logo(size: 24)),
+        ], backgroundColor: AppColor.white, centerTitle: false, title: const Logo(size: 24)),
         backgroundColor: AppColor.backgroundColor,
         body: pages[currentPageIndex],
         bottomNavigationBar: Column(mainAxisSize: MainAxisSize.min, children: [
